@@ -1,32 +1,50 @@
 import React, { useState } from "react";
+import Question from "./Question";
 
-function Question({ question, onAnswered }) {
-  const [timeRemaining, setTimeRemaining] = useState(10);
+function App() {
+  const questions = [
+    {
+      id: 1,
+      question: "What is the capital of France?",
+      answers: ["Paris", "London", "Berlin", "Madrid"],
+      correctAnswer: "Paris"
+    },
+    {
+      id: 2,
+      question: "Which language runs in a web browser?",
+      answers: ["Python", "Java", "C++", "JavaScript"],
+      correctAnswer: "JavaScript"
+    }
+  ];
 
-  // add useEffect code
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [score, setScore] = useState(0);
 
-  function handleAnswer(isCorrect) {
-    setTimeRemaining(10);
-    onAnswered(isCorrect);
-  }
+  const handleAnswered = (isCorrect) => {
+    if (isCorrect) {
+      setScore((prev) => prev + 1);
+    }
 
-  const { id, prompt, answers, correctIndex } = question;
+    // Move to the next question (loop back to start)
+    const nextIndex = (currentIndex + 1) % questions.length;
+    setCurrentIndex(nextIndex);
+  };
+
+  const currentQuestion = questions[currentIndex];
 
   return (
-    <>
-      <h1>Question {id}</h1>
-      <h3>{prompt}</h3>
-      {answers.map((answer, index) => {
-        const isCorrect = index === correctIndex;
-        return (
-          <button key={answer} onClick={() => handleAnswer(isCorrect)}>
-            {answer}
-          </button>
-        );
-      })}
-      <h5>{timeRemaining} seconds remaining</h5>
-    </>
+    <div className="app">
+      <h1>Trivia App</h1>
+      <p>Score: {score}</p>
+
+      <Question
+        question={currentQuestion.question}
+        answers={currentQuestion.answers}
+        correctAnswer={currentQuestion.correctAnswer}
+        onAnswered={handleAnswered}
+      />
+    </div>
   );
 }
 
-export default Question;
+export default App;
